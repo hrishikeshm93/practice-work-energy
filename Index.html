@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work, Energy and Power | Practice Bank</title>
+    
+    <!-- Fonts and Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        physics: {
+                            dark: '#0f172a',
+                            panel: 'rgba(30, 41, 59, 0.7)',
+                            accent: '#38bdf8',
+                            glow: 'rgba(56, 189, 248, 0.5)',
+                            success: '#22c55e',
+                            danger: '#ef4444',
+                            warning: '#f59e0b'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+    <!-- Custom CSS for Glassmorphism and Animations -->
+    <style>
+        body {
+            background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e1b4b 100%);
+            background-attachment: fixed;
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #38bdf8;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .solution-enter {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+        
+        .solution-enter-active {
+            max-height: 2000px;
+            opacity: 1;
+        }
+
+        .nav-btn {
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .q-grid-item {
+            transition: all 0.2s;
+        }
+        .q-grid-item:hover {
+            transform: scale(1.1);
+        }
+        
+        .math-container {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 5px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-physics-accent selection:text-white flex flex-col md:flex-row">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-full md:w-80 glass-panel md:h-screen sticky top-0 flex flex-col z-20 md:border-r border-white/10">
+        <div class="p-6 border-b border-white/10">
+            <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-500">
+                Class 11 Physics
+            </h1>
+            <h2 class="text-sm text-slate-300 mt-1">Work, Energy & Power</h2>
+            <div class="mt-4 text-xs font-semibold text-physics-accent uppercase tracking-wider">
+                <i class="fa-solid fa-graduation-cap mr-1"></i> Created by Hrishikesh M (PGT Physics)
+            </div>
+        </div>
+
+        <div class="p-6 flex-grow overflow-y-auto">
+            <div class="mb-6">
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-slate-400">Progress</span>
+                    <span id="progress-text" class="font-bold text-white">0/30</span>
+                </div>
+                <div class="w-full bg-slate-700 rounded-full h-2.5">
+                    <div id="progress-bar" class="bg-gradient-to-r from-cyan-400 to-blue-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <h3 class="text-sm text-slate-400 mb-3 uppercase tracking-wider font-semibold">Question Navigator</h3>
+            <div id="question-grid" class="grid grid-cols-5 gap-2">
+                <!-- Dynamically populated grid -->
+            </div>
+            
+            <div class="mt-8">
+                <h3 class="text-sm text-slate-400 mb-2 uppercase tracking-wider font-semibold">Legend</h3>
+                <div class="flex flex-col gap-2 text-xs">
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-slate-600"></div> Unattempted</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-physics-accent shadow-[0_0_8px_rgba(56,189,248,0.8)]"></div> Current</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-physics-success"></div> Mastered</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-physics-danger"></div> Needs Practice</div>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow p-4 md:p-8 lg:p-12 overflow-y-auto w-full max-w-5xl mx-auto">
+        
+        <!-- Question Card -->
+        <div id="question-card" class="glass-panel rounded-2xl p-6 md:p-10 w-full relative tex2jax_process">
+            <!-- Header/Tags -->
+            <div class="flex flex-wrap justify-between items-center gap-4 mb-8 pb-4 border-b border-white/10">
+                <div class="flex items-center gap-3">
+                    <span id="q-number" class="text-3xl font-bold text-white opacity-80">Q.1</span>
+                    <span id="q-topic" class="px-3 py-1 rounded-full bg-slate-800 border border-slate-600 text-xs font-medium text-slate-300">Topic</span>
+                </div>
+                <div class="flex gap-2">
+                    <span id="q-type" class="px-3 py-1 rounded-full bg-indigo-900/50 border border-indigo-500/50 text-indigo-300 text-xs font-medium flex items-center gap-1">
+                        <i class="fa-solid fa-calculator"></i> Numerical
+                    </span>
+                    <span id="q-diff" class="px-3 py-1 rounded-full bg-emerald-900/50 border border-emerald-500/50 text-emerald-300 text-xs font-medium">
+                        Easy
+                    </span>
+                </div>
+            </div>
+
+            <!-- Question Content -->
+            <div class="mb-8">
+                <div id="q-text" class="text-lg md:text-xl leading-relaxed text-slate-100 math-container">
+                    Loading question...
+                </div>
+            </div>
+
+            <!-- Interaction Area -->
+            <div id="interaction-area" class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 mb-6">
+                <label for="user-answer" class="block text-sm font-medium text-slate-400 mb-3">Your Answer / Attempt:</label>
+                <div class="flex flex-col md:flex-row gap-4">
+                    <input type="text" id="user-answer" placeholder="Enter your answer (e.g. 15 J) or notes..." class="flex-grow bg-slate-900 border border-slate-600 text-white text-sm rounded-lg focus:ring-physics-accent focus:border-physics-accent block w-full p-3 transition-colors">
+                    <button id="btn-check" class="bg-physics-accent hover:bg-blue-500 text-white font-semibold py-3 px-8 rounded-lg shadow-[0_0_15px_rgba(56,189,248,0.4)] transition-all flex-shrink-0 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-eye"></i> Check Solution
+                    </button>
+                </div>
+                <p class="text-xs text-slate-500 mt-3 italic">* Try solving it on paper first, then enter your final answer to verify.</p>
+            </div>
+
+            <!-- Solution Area (Hidden by default) -->
+            <div id="solution-area" class="solution-enter bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-white/10 mb-6">
+                <div class="p-6 border-b border-white/10 flex justify-between items-center bg-slate-800/50 rounded-t-xl">
+                    <h3 class="text-lg font-bold text-physics-accent"><i class="fa-solid fa-lightbulb mr-2"></i> Detailed Solution</h3>
+                    <div id="correct-ans-badge" class="px-4 py-1.5 rounded bg-emerald-500/20 border border-emerald-500/50 text-emerald-400 font-bold text-sm">
+                        Ans: ...
+                    </div>
+                </div>
+                <div id="q-solution" class="p-6 text-slate-300 leading-relaxed space-y-4 math-container">
+                    Solution details...
+                </div>
+                
+                <!-- Self-Assessment -->
+                <div class="p-6 bg-slate-900/80 rounded-b-xl border-t border-white/5">
+                    <p class="text-sm text-slate-400 mb-4 text-center">Did you get this right?</p>
+                    <div class="flex justify-center gap-4">
+                        <button onclick="markAnswer(true)" class="px-6 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-check"></i> Got it right!
+                        </button>
+                        <button onclick="markAnswer(false)" class="px-6 py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-medium transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-xmark"></i> Needs Practice
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex justify-between items-center pt-6 border-t border-white/10">
+                <button id="btn-prev" class="nav-btn px-5 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-medium flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Previous
+                </button>
+                <button id="btn-next" class="nav-btn px-5 py-2.5 rounded-lg bg-slate-700 hover:bg-slate-600 text-white font-medium flex items-center gap-2">
+                    Next <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Application Logic -->
+    <script>
+        // ---------------------------------------------------------
+        // QUESTION DATASET (30 Questions, strict NCERT alignment)
+        // 60% Numerical (18), 25% HOTS (8)
+        // ---------------------------------------------------------
+        const questions = [
+            {
+                id: 1, type: 'Numerical', difficulty: 'Moderate', topic: 'Work by Constant Force',
+                question: "Find the angle between force \\( \\vec{F} = (3\\hat{i} + 4\\hat{j} - 5\\hat{k}) \\) unit and displacement \\( \\vec{d} = (5\\hat{i} + 4\\hat{j} + 3\\hat{k}) \\) unit. Also find the projection of \\( \\vec{F} \\) on \\( \\vec{d} \\).",
+                correctAnswer: "Angle = cos⁻¹(0.32), Proj = 16/√50 unit",
+                detailedSolution: "<b>Step 1: Calculate the dot product</b><br>\\( \\vec{F} \\cdot \\vec{d} = (3)(5) + (4)(4) + (-5)(3) = 15 + 16 - 15 = 16 \\) units.<br><br><b>Step 2: Calculate magnitudes</b><br>\\( F = \\sqrt{3^2 + 4^2 + (-5)^2} = \\sqrt{9+16+25} = \\sqrt{50} \\) units.<br>\\( d = \\sqrt{5^2 + 4^2 + 3^2} = \\sqrt{25+16+9} = \\sqrt{50} \\) units.<br><br><b>Step 3: Find the angle</b><br>\\( \\cos\\theta = \\frac{\\vec{F} \\cdot \\vec{d}}{Fd} = \\frac{16}{\\sqrt{50}\\sqrt{50}} = \\frac{16}{50} = 0.32 \\)<br>\\( \\theta = \\cos^{-1}(0.32) \\).<br><br><b>Step 4: Projection of \\( \\vec{F} \\) on \\( \\vec{d} \\)</b><br>Projection = \\( F\\cos\\theta = \\frac{\\vec{F} \\cdot \\vec{d}}{d} = \\frac{16}{\\sqrt{50}} \\) units."
+            },
+            {
+                id: 2, type: 'Numerical', difficulty: 'Easy', topic: 'Work by Gravity',
+                question: "Consider a drop of mass 1.00 g falling from a height 1.00 km. It hits the ground with a speed of 50.0 m s⁻¹. What is the work done by the gravitational force? (Take \\( g = 10 \\text{ m s}^{-2} \\))",
+                correctAnswer: "10.0 J",
+                detailedSolution: "<b>Step 1: Identify given values</b><br>Mass, \\( m = 1.00 \\text{ g} = 10^{-3} \\text{ kg} \\)<br>Height, \\( h = 1.00 \\text{ km} = 10^3 \\text{ m} \\)<br>Acceleration due to gravity, \\( g = 10 \\text{ m s}^{-2} \\).<br><br><b>Step 2: Calculate work done by gravity</b><br>The force of gravity \\( (mg) \\) and displacement \\( (h) \\) are in the same direction.<br>\\( W_g = mgh \\)<br>\\( W_g = (10^{-3} \\text{ kg}) \\times (10 \\text{ m s}^{-2}) \\times (10^3 \\text{ m}) \\)<br>\\( W_g = 10.0 \\text{ J} \\)."
+            },
+            {
+                id: 3, type: 'Numerical', difficulty: 'HOTS', topic: 'Work-Energy Theorem',
+                question: "Continuing from the previous question: The raindrop of mass 1.00 g falls 1.00 km and hits the ground at 50.0 m s⁻¹. What is the work done by the unknown resistive force?",
+                correctAnswer: "-8.75 J",
+                detailedSolution: "<b>Step 1: Calculate the change in Kinetic Energy</b><br>Initial velocity \\( u = 0 \\), Final velocity \\( v = 50 \\text{ m s}^{-1} \\).<br>\\( \\Delta K = \\frac{1}{2}mv^2 - 0 = \\frac{1}{2}(10^{-3})(50)^2 = 1.25 \\text{ J} \\).<br><br><b>Step 2: Apply Work-Energy Theorem</b><br>Total work done = Change in Kinetic Energy.<br>\\( W_{net} = W_g + W_r = \\Delta K \\)<br>From the previous question, \\( W_g = 10.0 \\text{ J} \\).<br>\\( 10.0 + W_r = 1.25 \\)<br>\\( W_r = 1.25 - 10.0 = -8.75 \\text{ J} \\).<br><br><i>Note: The negative sign indicates the resistive force acts opposite to the displacement.</i>"
+            },
+            {
+                id: 4, type: 'Numerical', difficulty: 'Moderate', topic: 'Work done by friction',
+                question: "A cyclist comes to a skidding stop in 10 m. During this process, the force on the cycle due to the road is 200 N and is directly opposed to the motion. How much work does the road do on the cycle?",
+                correctAnswer: "-2000 J",
+                detailedSolution: "<b>Step 1: Identify values</b><br>Frictional force \\( f = 200 \\text{ N} \\)<br>Displacement \\( d = 10 \\text{ m} \\)<br>Angle between force and displacement \\( \\theta = 180^{\\circ} \\) (since it directly opposes motion).<br><br><b>Step 2: Calculate work done</b><br>\\( W_r = f d \\cos\\theta \\)<br>\\( W_r = 200 \\times 10 \\times \\cos(180^{\\circ}) \\)<br>\\( W_r = 2000 \\times (-1) = -2000 \\text{ J} \\)."
+            },
+            {
+                id: 5, type: 'Conceptual', difficulty: 'Easy', topic: 'Nature of Work Done',
+                question: "In the previous scenario where the cycle skids to a halt, how much work does the cycle do on the road? Explain.",
+                correctAnswer: "0 J",
+                detailedSolution: "<b>Reasoning:</b><br>According to Newton's Third Law, an equal and opposite force acts on the road due to the cycle. Its magnitude is 200 N.<br><br>However, work is defined as Force \\( \\times \\) Displacement. The road undergoes <b>no displacement</b> (\\( d = 0 \\)).<br><br>Therefore, the work done by the cycle on the road is exactly <b>zero</b>."
+            },
+            {
+                id: 6, type: 'Numerical', difficulty: 'HOTS', topic: 'Kinetic Energy',
+                question: "In a ballistics demonstration, a police officer fires a bullet of mass 50.0 g with speed 200 m s⁻¹ on soft plywood of thickness 2.00 cm. The bullet emerges with only 10% of its initial kinetic energy. What is the emergent speed of the bullet?",
+                correctAnswer: "63.2 m s⁻¹",
+                detailedSolution: "<b>Step 1: Initial Kinetic Energy</b><br>\\( K_i = \\frac{1}{2} m v_i^2 = \\frac{1}{2} (0.05 \\text{ kg}) (200 \\text{ m s}^{-1})^2 = 1000 \\text{ J} \\).<br><br><b>Step 2: Final Kinetic Energy</b><br>The bullet retains only 10% of its initial energy.<br>\\( K_f = 0.10 \\times 1000 = 100 \\text{ J} \\).<br><br><b>Step 3: Emergent Speed</b><br>\\( K_f = \\frac{1}{2} m v_f^2 \\)<br>\\( 100 = \\frac{1}{2} (0.05) v_f^2 \\)<br>\\( v_f^2 = \\frac{200}{0.05} = 4000 \\)<br>\\( v_f = \\sqrt{4000} \\approx 63.2 \\text{ m s}^{-1} \\)."
+            },
+            {
+                id: 7, type: 'Diagram', difficulty: 'Moderate', topic: 'Work by Variable Force',
+                question: "A woman pushes a trunk on a railway platform. She applies a force of 100 N over a distance of 10 m. Thereafter, she gets progressively tired and her applied force reduces linearly with distance to 50 N over the next 10 m. Calculate the total work done by the woman.<br><br><svg viewBox='0 0 400 200' class='w-full max-w-md mx-auto my-4 bg-slate-900 rounded border border-slate-700'><line x1='50' y1='150' x2='350' y2='150' stroke='white'/><line x1='50' y1='150' x2='50' y2='20' stroke='white'/><text x='35' y='30' fill='white' font-size='12'>100</text><text x='35' y='90' fill='white' font-size='12'>50</text><text x='150' y='170' fill='white' font-size='12'>10 m</text><text x='250' y='170' fill='white' font-size='12'>20 m</text><path d='M50 30 L150 30 L250 90 L250 150 L50 150 Z' fill='rgba(56,189,248,0.3)' stroke='cyan'/></svg>",
+                correctAnswer: "1750 J",
+                detailedSolution: "<b>Concept:</b> Work done by a variable force is the area under the Force-Displacement graph.<br><br><b>Step 1: Area of the rectangle (first 10 m)</b><br>\\( W_1 = \\text{Force} \\times \\text{Displacement} = 100 \\text{ N} \\times 10 \\text{ m} = 1000 \\text{ J} \\).<br><br><b>Step 2: Area of the trapezium (next 10 m)</b><br>\\( W_2 = \\frac{1}{2} \\times (\\text{Sum of parallel sides}) \\times \\text{base} \\)<br>\\( W_2 = \\frac{1}{2} \\times (100 + 50) \\times (20 - 10) \\)<br>\\( W_2 = \\frac{1}{2} \\times 150 \\times 10 = 750 \\text{ J} \\).<br><br><b>Step 3: Total Work</b><br>\\( W_{total} = W_1 + W_2 = 1000 + 750 = 1750 \\text{ J} \\)."
+            },
+            {
+                id: 8, type: 'Numerical', difficulty: 'HOTS', topic: 'Integration & Work',
+                question: "A block of mass \\( m = 1 \\text{ kg} \\), moving on a horizontal surface with speed \\( v_i = 2 \\text{ m s}^{-1} \\) enters a rough patch ranging from \\( x = 0.10 \\text{ m} \\) to \\( x = 2.01 \\text{ m} \\). The retarding force \\( F_r \\) on the block in this range is inversely proportional to \\( x \\): \\( F_r = \\frac{-k}{x} \\) where \\( k = 0.5 \\text{ J} \\). What is the final kinetic energy of the block as it crosses this patch?",
+                correctAnswer: "0.5 J",
+                detailedSolution: "<b>Step 1: Work-Energy Theorem for Variable Force</b><br>\\( K_f - K_i = \\int_{x_i}^{x_f} F_r dx \\)<br>\\( K_i = \\frac{1}{2} m v_i^2 = \\frac{1}{2} (1)(2)^2 = 2 \\text{ J} \\).<br><br><b>Step 2: Integrate Force</b><br>\\( W = \\int_{0.10}^{2.01} \\left(\\frac{-0.5}{x}\\right) dx = -0.5 [\\ln x]_{0.10}^{2.01} \\)<br>\\( W = -0.5 (\\ln 2.01 - \\ln 0.10) = -0.5 \\ln\\left(\\frac{2.01}{0.10}\\right) = -0.5 \\ln(20.1) \\).<br>Given \\( \\ln(20.1) \\approx 3.0 \\).<br>\\( W = -0.5 \\times 3.0 = -1.5 \\text{ J} \\).<br><br><b>Step 3: Final Kinetic Energy</b><br>\\( K_f = K_i + W = 2 - 1.5 = 0.5 \\text{ J} \\)."
+            },
+            {
+                id: 9, type: 'Numerical', difficulty: 'Moderate', topic: 'Potential Energy',
+                question: "To simulate car accidents, auto manufacturers study the collisions of moving cars with mounted springs. Consider a car of mass 1000 kg moving with a speed of 18.0 km/h colliding with a horizontally mounted spring of spring constant \\( 6.25 \\times 10^3 \\text{ N m}^{-1} \\). What is the maximum compression of the spring?",
+                correctAnswer: "2.0 m",
+                detailedSolution: "<b>Step 1: Convert Units</b><br>Velocity \\( v = 18.0 \\text{ km/h} = 18 \times \\frac{5}{18} = 5 \\text{ m s}^{-1} \\).<br><br><b>Step 2: Conservation of Mechanical Energy</b><br>At maximum compression \\( x_m \\), the entire kinetic energy of the car is converted into elastic potential energy of the spring.<br>\\( \\frac{1}{2} m v^2 = \\frac{1}{2} k x_m^2 \\)<br><br><b>Step 3: Solve for \\( x_m \\)</b><br>\\( x_m^2 = \\frac{mv^2}{k} = \\frac{1000 \\times (5)^2}{6.25 \\times 10^3} \\)<br>\\( x_m^2 = \\frac{25000}{6250} = 4 \\)<br>\\( x_m = 2.0 \\text{ m} \\)."
+            },
+            {
+                id: 10, type: 'Numerical', difficulty: 'HOTS', topic: 'Work-Energy with Friction',
+                question: "Consider the previous car-spring collision (m = 1000 kg, v = 5 m/s, k = \\( 6.25 \\times 10^3 \\text{ N m}^{-1} \\)). This time, the surface is rough with a coefficient of friction \\( \\mu = 0.5 \\). Calculate the maximum compression of the spring. (Use \\( g = 10 \\text{ m s}^{-2} \\))",
+                correctAnswer: "1.35 m",
+                detailedSolution: "<b>Step 1: Work-Energy Theorem</b><br>Change in KE = Work done by net force (Spring force + Frictional force).<br>\\( 0 - \\frac{1}{2}mv^2 = -\\frac{1}{2}kx_m^2 - \\mu mg x_m \\)<br>Rearranging: \\( \\frac{1}{2}kx_m^2 + \\mu mg x_m - \\frac{1}{2}mv^2 = 0 \\)<br><br><b>Step 2: Plug in values</b><br>\\( \\frac{1}{2}(6250)x_m^2 + (0.5)(1000)(10)x_m - \\frac{1}{2}(1000)(25) = 0 \\)<br>\\( 3125 x_m^2 + 5000 x_m - 12500 = 0 \\)<br>Dividing by 125: \\( 25 x_m^2 + 40 x_m - 100 = 0 \\)<br><br><b>Step 3: Quadratic Formula</b><br>\\( x_m = \\frac{-40 \\pm \\sqrt{1600 - 4(25)(-100)}}{50} = \\frac{-40 \\pm \\sqrt{11600}}{50} \\)<br>\\( x_m = \\frac{-40 + 107.7}{50} \\approx 1.35 \\text{ m} \\)."
+            },
+            {
+                id: 11, type: 'Numerical', difficulty: 'Moderate', topic: 'Power',
+                question: "An elevator can carry a maximum load of 1800 kg (elevator + passengers) and is moving up with a constant speed of 2 m s⁻¹. The frictional force opposing the motion is 4000 N. Determine the minimum power delivered by the motor to the elevator in watts. (Use \\( g = 10 \\text{ m s}^{-2} \\))",
+                correctAnswer: "44000 W",
+                detailedSolution: "<b>Step 1: Total downward force</b><br>Weight of elevator = \\( mg = 1800 \\times 10 = 18000 \\text{ N} \\).<br>Frictional force \\( f = 4000 \\text{ N} \\) (acts downwards as motion is up).<br>Total force motor must overcome: \\( F = 18000 + 4000 = 22000 \\text{ N} \\).<br><br><b>Step 2: Calculate Power</b><br>Since it moves at constant velocity, \\( P = F \\cdot v \\)<br>\\( P = 22000 \\text{ N} \\times 2 \\text{ m s}^{-1} = 44000 \\text{ W} \\).<br><i>(This is equivalent to approx 59 hp)</i>."
+            },
+            {
+                id: 12, type: 'Numerical', difficulty: 'HOTS', topic: 'Elastic Collisions',
+                question: "In a nuclear reactor, a neutron of high speed undergoes a head-on elastic collision with a stationary Deuterium nucleus (mass of Deuterium is roughly 2 times the mass of a neutron). What fraction of its initial kinetic energy does the neutron lose?",
+                correctAnswer: "8/9 (or 88.9%)",
+                detailedSolution: "<b>Step 1: Final velocity of neutron</b><br>For elastic head-on collision, \\( v_{1f} = \\left( \\frac{m_1 - m_2}{m_1 + m_2} \\right) v_{1i} \\)<br>Let \\( m_1 = m \\) (neutron), then \\( m_2 = 2m \\) (deuterium).<br>\\( v_{1f} = \\left( \\frac{m - 2m}{m + 2m} \\right) v_{1i} = -\\frac{1}{3} v_{1i} \\).<br><br><b>Step 2: Final Kinetic Energy</b><br>\\( K_{1f} = \\frac{1}{2} m_1 v_{1f}^2 = \\frac{1}{2} m \\left(-\\frac{1}{3} v_{1i}\\right)^2 = \\frac{1}{9} \\left(\\frac{1}{2} m v_{1i}^2\\right) = \\frac{1}{9} K_{1i} \\).<br><br><b>Step 3: Fraction Lost</b><br>Fraction lost = \\( \\frac{K_{1i} - K_{1f}}{K_{1i}} = 1 - \\frac{1}{9} = \\frac{8}{9} \\)."
+            },
+            {
+                id: 13, type: 'Application', difficulty: 'HOTS', topic: 'Collisions in 2D',
+                question: "Two billiard balls of equal masses undergo a glancing elastic collision. The first ball (cue) strikes the second ball (target) which is initially at rest. The target ball is deflected into a pocket at an angle of 37° from the original direction of the cue ball. At what angle to the original direction does the cue ball emerge?",
+                correctAnswer: "53°",
+                detailedSolution: "<b>Concept: Glancing Elastic Collision of Equal Masses</b><br>When two equal masses undergo an elastic collision with one initially at rest, they always move off at exactly <b>right angles (90°)</b> to each other (provided it's not a head-on collision where 1D rules apply).<br><br><b>Step 1: Set up the angle relationship</b><br>Let \\( \\theta_1 \\) be the cue ball angle and \\( \\theta_2 \\) be the target ball angle.<br>\\( \\theta_1 + \\theta_2 = 90^{\\circ} \\).<br><br><b>Step 2: Calculate</b><br>\\( \\theta_1 + 37^{\\circ} = 90^{\\circ} \\)<br>\\( \\theta_1 = 90^{\\circ} - 37^{\\circ} = 53^{\\circ} \\)."
+            },
+            {
+                id: 14, type: 'Numerical', difficulty: 'Easy', topic: 'Kinematics & Work',
+                question: "A body of mass 2 kg initially at rest moves under the action of an applied horizontal force of 7 N on a table with a coefficient of kinetic friction = 0.1. Compute the work done by the applied force in 10 s. (Use \\( g = 10 \\text{ m s}^{-2} \\))",
+                correctAnswer: "875 J",
+                detailedSolution: "<b>Step 1: Find acceleration</b><br>Frictional force \\( f = \\mu mg = 0.1 \\times 2 \\times 10 = 2 \\text{ N} \\).<br>Net force \\( F_{net} = F_{applied} - f = 7 - 2 = 5 \\text{ N} \\).<br>Acceleration \\( a = \\frac{F_{net}}{m} = \\frac{5}{2} = 2.5 \\text{ m s}^{-2} \\).<br><br><b>Step 2: Find displacement in 10 s</b><br>\\( s = ut + \\frac{1}{2}at^2 = 0 + \\frac{1}{2}(2.5)(10)^2 = 125 \\text{ m} \\).<br><br><b>Step 3: Work by applied force</b><br>\\( W_{applied} = F_{applied} \\times s = 7 \\times 125 = 875 \\text{ J} \\)."
+            },
+            {
+                id: 15, type: 'Numerical', difficulty: 'Easy', topic: 'Work done by Friction',
+                question: "Continuing from the previous question (mass=2kg, applied force=7N, \\( \\mu = 0.1 \\), distance=125m in 10s): Compute the work done by friction in 10 s.",
+                correctAnswer: "-250 J",
+                detailedSolution: "<b>Step 1: Identify values</b><br>Frictional force \\( f = \\mu mg = 2 \\text{ N} \\).<br>Displacement \\( s = 125 \\text{ m} \\).<br>Friction acts opposite to motion, so angle \\( \\theta = 180^{\\circ} \\).<br><br><b>Step 2: Calculate work</b><br>\\( W_f = f \\times s \\times \\cos(180^{\\circ}) \\)<br>\\( W_f = 2 \\times 125 \\times (-1) = -250 \\text{ J} \\)."
+            },
+            {
+                id: 16, type: 'Conceptual', difficulty: 'Moderate', topic: 'Conservative Forces',
+                question: "State whether true or false: Work done in the motion of a body over a closed loop is zero for every force in nature. Justify.",
+                correctAnswer: "False",
+                detailedSolution: "<b>Reasoning:</b><br>The statement is <b>False</b>.<br>The work done over a closed loop is zero <i>only</i> for <b>conservative forces</b> (like gravitational force, electrostatic force, spring force).<br><br>For <b>non-conservative forces</b> (like friction or viscous drag), work done over a closed loop is not zero. Energy is dissipated as heat, and reversing the path does not recover this energy."
+            },
+            {
+                id: 17, type: 'Diagram', difficulty: 'HOTS', topic: 'Potential Energy Curve',
+                question: "Consider a particle executing linear SHM with potential energy \\( V(x) = \\frac{1}{2}kx^2 \\). If the total energy of the particle is E, at what points \\( (\\pm x) \\) will the particle 'turn back' (velocity becomes zero)?<br><br><svg viewBox='0 0 400 200' class='w-full max-w-sm mx-auto my-4 bg-slate-900 rounded'><path d='M50 50 Q200 250 350 50' fill='none' stroke='#38bdf8' stroke-width='3'/><line x1='0' y1='150' x2='400' y2='150' stroke='gray'/><line x1='200' y1='0' x2='200' y2='200' stroke='gray'/></svg>",
+                correctAnswer: "x = ± √(2E/k)",
+                detailedSolution: "<b>Step 1: Use Conservation of Energy</b><br>Total Energy \\( E = K + V \\)<br>\\( E = \\frac{1}{2}mv^2 + \\frac{1}{2}kx^2 \\)<br><br><b>Step 2: Turning point condition</b><br>At the turning points (extreme positions), the particle comes to rest momentarily, so kinetic energy \\( K = 0 \\).<br>Therefore, \\( E = 0 + \\frac{1}{2}kx^2 \\)<br><br><b>Step 3: Solve for x</b><br>\\( x^2 = \\frac{2E}{k} \\)<br>\\( x = \\pm \\sqrt{\\frac{2E}{k}} \\). These are the turning points."
+            },
+            {
+                id: 18, type: 'Numerical', difficulty: 'Moderate', topic: 'Conservation of Mech Energy',
+                question: "A bob of mass m is suspended by a light string of length L. It is imparted a horizontal velocity \\( v_0 \\) at the lowest point such that it completes a semi-circular trajectory in the vertical plane with the string becoming slack only on reaching the topmost point. Obtain an expression for \\( v_0 \\).",
+                correctAnswer: "√(5gL)",
+                detailedSolution: "<b>Step 1: Energy at Lowest Point (A)</b><br>Take PE at lowest point as 0. Total Energy \\( E_A = \\frac{1}{2}mv_0^2 \\).<br><br><b>Step 2: Conditions at Highest Point (C)</b><br>At top, string slackens \\( \\Rightarrow \\text{Tension } T_C = 0 \\).<br>Centripetal force is provided solely by gravity: \\( mg = \\frac{mv_C^2}{L} \\Rightarrow v_C^2 = gL \\).<br>Height at C is \\( 2L \\). Total Energy \\( E_C = \\frac{1}{2}mv_C^2 + mg(2L) = \\frac{1}{2}m(gL) + 2mgL = \\frac{5}{2}mgL \\).<br><br><b>Step 3: Equate Energies</b><br>\\( E_A = E_C \\Rightarrow \\frac{1}{2}mv_0^2 = \\frac{5}{2}mgL \\)<br>\\( v_0 = \\sqrt{5gL} \\)."
+            },
+            {
+                id: 19, type: 'Numerical', difficulty: 'Moderate', topic: 'Power & Efficiency',
+                question: "A pump on the ground floor of a building can pump up water to fill a tank of volume 30 m³ in 15 min. If the tank is 40 m above the ground, and the efficiency of the pump is 30%, how much electric power is consumed by the pump? (Density of water = 10³ kg/m³, g = 10 m/s²)",
+                correctAnswer: "44.4 kW",
+                detailedSolution: "<b>Step 1: Mass of water</b><br>\\( m = \\text{Volume} \\times \\text{Density} = 30 \\times 10^3 = 30000 \\text{ kg} \\).<br><br><b>Step 2: Output Power (Useful Work rate)</b><br>Work done \\( = mgh = 30000 \\times 10 \\times 40 = 12 \\times 10^6 \\text{ J} \\).<br>Time \\( t = 15 \\text{ min} = 15 \\times 60 = 900 \\text{ s} \\).<br>Output Power \\( P_{out} = \\frac{W}{t} = \\frac{12 \\times 10^6}{900} = \\frac{40000}{3} \\approx 13333 \\text{ W} \\).<br><br><b>Step 3: Input Power</b><br>Efficiency \\( \\eta = \\frac{P_{out}}{P_{in}} \\Rightarrow P_{in} = \\frac{P_{out}}{\\eta} = \\frac{13333}{0.30} \\approx 44444 \\text{ W} = 44.4 \\text{ kW} \\)."
+            },
+            {
+                id: 20, type: 'Numerical', difficulty: 'HOTS', topic: 'Energy Dissipation',
+                question: "The bob of a pendulum is released from a horizontal position. If the length of the pendulum is 1.5 m, what is the speed with which the bob arrives at the lowermost point, given that it dissipated 5% of its initial energy against air resistance? (g = 10 m/s²)",
+                correctAnswer: "5.34 m/s",
+                detailedSolution: "<b>Step 1: Initial Energy</b><br>Since released from horizontal, height \\( h = L = 1.5 \\text{ m} \\).<br>Initial Energy \\( E_i = mgL \\).<br><br><b>Step 2: Energy dissipated</b><br>5% is lost, so 95% remains.<br>Final Energy \\( E_f = 0.95 \\times mgL \\).<br><br><b>Step 3: Speed at lowest point</b><br>At lowest point, all remaining energy is kinetic.<br>\\( \\frac{1}{2}mv^2 = 0.95 \\times mgL \\)<br>\\( v^2 = 1.90 \\times gL = 1.90 \\times 10 \\times 1.5 = 28.5 \\)<br>\\( v = \\sqrt{28.5} \\approx 5.34 \\text{ m/s} \\)."
+            },
+            {
+                id: 21, type: 'Application', difficulty: 'Easy', topic: 'Zero Work',
+                question: "A weightlifter holds a 150 kg mass steadily on his shoulder for 30 s. How much work does he do on the load during this time?",
+                correctAnswer: "0 J",
+                detailedSolution: "<b>Reasoning:</b><br>Work is defined as \\( W = \\vec{F} \\cdot \\vec{d} \\).<br>Although the weightlifter exerts a large force to counter gravity, the displacement of the mass is <b>zero</b> (it is held steadily).<br>Since \\( d = 0 \\), the work done is exactly zero. (He gets tired because his muscles use internal chemical energy, but physiologically, no mechanical work is done on the weight)."
+            },
+            {
+                id: 22, type: 'Numerical', difficulty: 'Easy', topic: 'Alternative Units',
+                question: "A typical 100 watt bulb is kept on for 10 hours. Convert the energy consumed (1 kWh) into Joules.",
+                correctAnswer: "3.6 × 10⁶ J",
+                detailedSolution: "<b>Step 1: Understand the unit</b><br>1 kWh means 1 kiloWatt of power used for 1 Hour.<br><br><b>Step 2: Convert to SI units</b><br>1 kW = 1000 W = 1000 J/s.<br>1 hour = 60 minutes \\( \\times \\) 60 seconds = 3600 s.<br><br><b>Step 3: Multiply</b><br>Energy = Power \\( \\times \\) Time<br>Energy = (1000 J/s) \\( \\times \\) (3600 s) = 3,600,000 J = \\( 3.6 \\times 10^6 \\text{ J} \\)."
+            },
+            {
+                id: 23, type: 'Numerical', difficulty: 'Easy', topic: 'Kinetic Energy',
+                question: "Calculate the kinetic energy of a running athlete of mass 70 kg running at a speed of 10 m s⁻¹.",
+                correctAnswer: "3500 J",
+                detailedSolution: "<b>Step 1: Use Kinetic Energy Formula</b><br>\\( K = \\frac{1}{2}mv^2 \\)<br><br><b>Step 2: Plug in values</b><br>\\( K = \\frac{1}{2} \\times 70 \\text{ kg} \\times (10 \\text{ m s}^{-1})^2 \\)<br>\\( K = 35 \\times 100 = 3500 \\text{ J} \\)."
+            },
+            {
+                id: 24, type: 'Application', difficulty: 'Moderate', topic: 'Work-Energy Theorem limitation',
+                question: "While the Work-Energy theorem is useful, it is an integral form of Newton's second law. What specific information present in Newton's second law is 'integrated over' and lost in the Work-Energy theorem?",
+                correctAnswer: "Temporal (time) information",
+                detailedSolution: "<b>Reasoning:</b><br>Newton's second law (\\( F = ma \\)) relates force and acceleration at any specific <b>instant of time</b>.<br><br>The Work-Energy theorem (\\( W = \\Delta K \\)) relates the total work done over a spatial displacement to the total change in kinetic energy. In integrating over displacement, the explicit <b>time information</b> (how long the process took) is lost. We know the speed changed, but not the duration it took to change."
+            },
+            {
+                id: 25, type: 'Numerical', difficulty: 'Moderate', topic: 'Inelastic Collision',
+                question: "A mass of 2 kg moving at 5 m/s collides with a stationary mass of 3 kg. They stick together after the collision. What is their common final velocity?",
+                correctAnswer: "2 m/s",
+                detailedSolution: "<b>Step 1: Conservation of Linear Momentum</b><br>In any collision, total momentum is conserved.<br>\\( p_i = p_f \\)<br>\\( m_1v_1 + m_2v_2 = (m_1 + m_2)v_f \\)<br><br><b>Step 2: Plug in values</b><br>\\( (2 \\text{ kg})(5 \\text{ m/s}) + (3 \\text{ kg})(0) = (2 + 3) v_f \\)<br>\\( 10 = 5 v_f \\)<br>\\( v_f = 2 \\text{ m/s} \\)."
+            },
+            {
+                id: 26, type: 'Numerical', difficulty: 'HOTS', topic: 'Loss of KE in Collision',
+                question: "For the previous completely inelastic collision (2 kg at 5 m/s hitting stationary 3 kg), calculate the loss in kinetic energy during the collision.",
+                correctAnswer: "15 J",
+                detailedSolution: "<b>Step 1: Initial Kinetic Energy</b><br>\\( K_i = \\frac{1}{2}m_1v_1^2 + 0 = \\frac{1}{2}(2)(5)^2 = 25 \\text{ J} \\).<br><br><b>Step 2: Final Kinetic Energy</b><br>Final mass = 5 kg, Final velocity = 2 m/s.<br>\\( K_f = \\frac{1}{2}(m_1+m_2)v_f^2 = \\frac{1}{2}(5)(2)^2 = 10 \\text{ J} \\).<br><br><b>Step 3: Calculate Loss</b><br>Loss = \\( K_i - K_f = 25 - 10 = 15 \\text{ J} \\).<br><br><i>Shortcut formula:</i> \\( \\Delta K = \\frac{1}{2} \\frac{m_1 m_2}{m_1 + m_2} v_{1i}^2 = \\frac{1}{2} \\left(\\frac{2 \\times 3}{5}\\right) 25 = 15 \\text{ J} \\)."
+            },
+            {
+                id: 27, type: 'Numerical', difficulty: 'Easy', topic: 'Potential Energy of Spring',
+                question: "A spring with force constant k = 500 N/m is compressed by 10 cm. What is the potential energy stored in the spring?",
+                correctAnswer: "2.5 J",
+                detailedSolution: "<b>Step 1: Convert units</b><br>Compression \\( x = 10 \\text{ cm} = 0.1 \\text{ m} \\).<br><br><b>Step 2: Formula</b><br>\\( V(x) = \\frac{1}{2} k x^2 \\)<br>\\( V(0.1) = \\frac{1}{2} (500) (0.1)^2 \\)<br>\\( V = 250 \\times 0.01 = 2.5 \\text{ J} \\)."
+            },
+            {
+                id: 28, type: 'Application', difficulty: 'HOTS', topic: 'Power & Calculus',
+                question: "A body is initially at rest. It undergoes one-dimensional motion with constant acceleration 'a'. Show the proportionality of the power delivered to it at time 't' with respect to 't'.",
+                correctAnswer: "P ∝ t",
+                detailedSolution: "<b>Step 1: Express velocity in terms of time</b><br>Since it starts from rest with constant acceleration, \\( v(t) = at \\).<br><br><b>Step 2: Express Force</b><br>By Newton's second law, Force \\( F = ma \\) (which is constant).<br><br><b>Step 3: Calculate Power</b><br>Instantaneous power \\( P = F \\cdot v \\)<br>\\( P = (ma)(at) = m a^2 t \\).<br><br>Since mass 'm' and acceleration 'a' are constants, Power \\( P \\propto t \\). It is directly proportional to time."
+            },
+            {
+                id: 29, type: 'Numerical', difficulty: 'Moderate', topic: 'Instantaneous Power',
+                question: "A force \\( F = (10\\hat{i} + 5\\hat{j}) \\text{ N} \\) acts on a particle moving with a velocity \\( v = (2\\hat{i} - 2\\hat{j}) \\text{ m/s} \\). What is the instantaneous power delivered to the particle?",
+                correctAnswer: "10 W",
+                detailedSolution: "<b>Step 1: Use Dot Product Formula for Power</b><br>\\( P = \\vec{F} \\cdot \\vec{v} \\)<br><br><b>Step 2: Calculate</b><br>\\( P = (10\\hat{i} + 5\\hat{j}) \\cdot (2\\hat{i} - 2\\hat{j}) \\)<br>\\( P = (10)(2) + (5)(-2) \\)<br>\\( P = 20 - 10 = 10 \\text{ W} \\)."
+            },
+            {
+                id: 30, type: 'Conceptual', difficulty: 'Easy', topic: 'Conservation Laws',
+                question: "In an inelastic collision of two bodies, which of the following quantities are conserved? (A) Total kinetic energy, (B) Total linear momentum, (C) Total mechanical energy.",
+                correctAnswer: "(B) Total linear momentum only",
+                detailedSolution: "<b>Reasoning:</b><br>- <b>Total linear momentum</b> is conserved in ALL collisions (elastic and inelastic) assuming no external impulsive forces.<br>- <b>Total kinetic energy</b> is ONLY conserved in perfectly elastic collisions. In inelastic collisions, some KE is converted to heat/deformation energy.<br>- <b>Total mechanical energy</b> is not conserved if non-conservative forces (like internal friction causing heat during deformation) do work."
+            }
+        ];
+
+        // Application State
+        let currentIndex = 0;
+        const userScores = new Array(questions.length).fill(null); // null = unattempted, true = correct, false = incorrect
+
+        // DOM Elements
+        const elQNumber = document.getElementById('q-number');
+        const elQTopic = document.getElementById('q-topic');
+        const elQType = document.getElementById('q-type');
+        const elQDiff = document.getElementById('q-diff');
+        const elQText = document.getElementById('q-text');
+        
+        const elUserAnswer = document.getElementById('user-answer');
+        const elBtnCheck = document.getElementById('btn-check');
+        const elSolutionArea = document.getElementById('solution-area');
+        const elQSolution = document.getElementById('q-solution');
+        const elCorrectBadge = document.getElementById('correct-ans-badge');
+        
+        const elBtnPrev = document.getElementById('btn-prev');
+        const elBtnNext = document.getElementById('btn-next');
+        const elGrid = document.getElementById('question-grid');
+        const elProgressText = document.getElementById('progress-text');
+        const elProgressBar = document.getElementById('progress-bar');
+
+        // Initialize
+        function init() {
+            renderGrid();
+            loadQuestion(currentIndex);
+            
+            // Event Listeners
+            elBtnCheck.addEventListener('click', revealSolution);
+            elBtnPrev.addEventListener('click', () => { if (currentIndex > 0) loadQuestion(currentIndex - 1); });
+            elBtnNext.addEventListener('click', () => { if (currentIndex < questions.length - 1) loadQuestion(currentIndex + 1); });
+            
+            // Allow "Enter" to trigger check
+            elUserAnswer.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') revealSolution();
+            });
+        }
+
+        // Render the Question
+        function loadQuestion(index) {
+            currentIndex = index;
+            const q = questions[index];
+            
+            // Update UI
+            elQNumber.innerText = `Q.${q.id}`;
+            elQTopic.innerText = q.topic;
+            elQText.innerHTML = q.question;
+            
+            // Set Difficulty styling
+            elQDiff.innerText = q.difficulty;
+            elQDiff.className = 'px-3 py-1 rounded-full text-xs font-medium border';
+            if (q.difficulty === 'Easy') elQDiff.classList.add('bg-emerald-900/50', 'border-emerald-500/50', 'text-emerald-300');
+            else if (q.difficulty === 'Moderate') elQDiff.classList.add('bg-amber-900/50', 'border-amber-500/50', 'text-amber-300');
+            else elQDiff.classList.add('bg-rose-900/50', 'border-rose-500/50', 'text-rose-300');
+
+            // Set Type styling
+            let typeIcon = '';
+            if(q.type === 'Numerical') typeIcon = '<i class="fa-solid fa-calculator"></i>';
+            else if(q.type === 'Conceptual') typeIcon = '<i class="fa-solid fa-brain"></i>';
+            else if(q.type === 'Diagram') typeIcon = '<i class="fa-solid fa-chart-line"></i>';
+            else typeIcon = '<i class="fa-solid fa-flask"></i>';
+            
+            elQType.innerHTML = `${typeIcon} ${q.type}`;
+            
+            // Reset Interaction Area
+            elUserAnswer.value = '';
+            elSolutionArea.classList.remove('solution-enter-active');
+            
+            // Navigation button states
+            elBtnPrev.disabled = (currentIndex === 0);
+            elBtnNext.disabled = (currentIndex === questions.length - 1);
+
+            if(typeof MathJax !== 'undefined' && typeof MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise([elQText, elQSolution]).catch(err => console.log(err));
+            }
+            
+            updateGridHighlights();
+        }
+
+        // Reveal Solution
+        function revealSolution() {
+            if(!elUserAnswer.value.trim()) {
+                // Flash input if empty
+                elUserAnswer.classList.add('border-rose-500', 'ring-rose-500', 'ring-2');
+                setTimeout(() => elUserAnswer.classList.remove('border-rose-500', 'ring-rose-500', 'ring-2'), 1000);
+                return;
+            }
+
+            const q = questions[currentIndex];
+            elCorrectBadge.innerText = `Correct Answer: ${q.correctAnswer}`;
+            elQSolution.innerHTML = q.detailedSolution;
+            
+            // Show solution with smooth expand
+            elSolutionArea.classList.add('solution-enter-active');
+            
+            if(typeof MathJax !== 'undefined' && typeof MathJax.typesetPromise === 'function') {
+                MathJax.typesetPromise([elQSolution]).then(() => {
+                    // Scroll down to solution smoothly after MathJax renders
+                    elSolutionArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }).catch(err => console.log(err));
+            } else {
+                // Fallback scroll if MathJax is still loading
+                setTimeout(() => elSolutionArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+            }
+        }
+
+        // Mark Answer (Self Assessment)
+        function markAnswer(isCorrect) {
+            userScores[currentIndex] = isCorrect;
+            
+            // Update stats
+            updateProgress();
+            renderGrid();
+            
+            // Visual feedback
+            const btn = event.currentTarget;
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = `<i class="fa-solid fa-check-double"></i> Recorded!`;
+            setTimeout(() => btn.innerHTML = originalHTML, 1500);
+
+            // Auto-advance after short delay if correct and not at end
+            if(isCorrect && currentIndex < questions.length - 1) {
+                setTimeout(() => loadQuestion(currentIndex + 1), 800);
+            }
+        }
+
+        // Progress Calculation
+        function updateProgress() {
+            const attempted = userScores.filter(s => s !== null).length;
+            elProgressText.innerText = `${attempted}/${questions.length}`;
+            const percentage = (attempted / questions.length) * 100;
+            elProgressBar.style.width = `${percentage}%`;
+        }
+
+        // Navigator Grid Generation
+        function renderGrid() {
+            elGrid.innerHTML = '';
+            questions.forEach((q, i) => {
+                const btn = document.createElement('button');
+                btn.innerText = q.id;
+                
+                // Base classes
+                btn.className = 'q-grid-item w-8 h-8 rounded-full text-xs font-bold flex items-center justify-center border transition-all';
+                
+                // Status colors
+                const status = userScores[i];
+                if (status === true) {
+                    btn.classList.add('bg-physics-success', 'border-emerald-400', 'text-white');
+                } else if (status === false) {
+                    btn.classList.add('bg-physics-danger', 'border-rose-400', 'text-white');
+                } else {
+                    btn.classList.add('bg-slate-700', 'border-slate-500', 'text-slate-300', 'hover:bg-slate-600');
+                }
+
+                btn.onclick = () => loadQuestion(i);
+                elGrid.appendChild(btn);
+            });
+            updateGridHighlights();
+        }
+
+        // Highlight current question in grid
+        function updateGridHighlights() {
+            const buttons = elGrid.querySelectorAll('button');
+            buttons.forEach((btn, i) => {
+                if (i === currentIndex) {
+                    btn.classList.add('ring-2', 'ring-physics-accent', 'ring-offset-2', 'ring-offset-slate-900');
+                    if(userScores[i] === null) {
+                        btn.classList.replace('bg-slate-700', 'bg-physics-accent');
+                        btn.classList.replace('text-slate-300', 'text-white');
+                    }
+                } else {
+                    btn.classList.remove('ring-2', 'ring-physics-accent', 'ring-offset-2', 'ring-offset-slate-900');
+                    if(userScores[i] === null) {
+                         btn.classList.replace('bg-physics-accent', 'bg-slate-700');
+                         btn.classList.replace('text-white', 'text-slate-300');
+                    }
+                }
+            });
+        }
+
+        // Start Application
+        window.addEventListener('DOMContentLoaded', init);
+
+    </script>
+</body>
+</html>
